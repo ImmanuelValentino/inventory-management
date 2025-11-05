@@ -4,11 +4,16 @@ const express = require('express');
 const cors = require('cors');
 const supabase = require('./config/supabaseClient');
 
+// --- 1. IMPOR SEMUA MIDDLEWARE & RUTE ---
+const authMiddleware = require('./middleware/authMiddleware');
+const adminOnlyMiddleware = require('./middleware/adminOnlyMiddleware');
+
 const productRoutes = require('./routes/productRoutes'); // <--- TAMBAHKAN INI
 const supplierRoutes = require('./routes/supplierRoutes');
 const warehouseRoutes = require('./routes/warehouseRoutes');
 const locationRoutes = require('./routes/locationRoutes.');
 const stockRoutes = require('./routes/stockRoutes');
+const authRoutes = require('./routes/authRoutes');
 
 
 const app = express();
@@ -17,19 +22,23 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
-// Test Route
+// --- 2. DEFISIKAN RUTE ---
+
+// Rute Publik (Tidak perlu login)
+app.use('/api/auth', authRoutes);
 app.get('/api/test', (req, res) => {
-    res.json({ message: 'API berjalan dengan sukses!' });
+    res.json({ message: 'API berjalan!' });
 });
 
-// --- (Nanti kita tambahkan routes untuk /api/products, /api/stock, dll di sini) ---
+// Rute Admin Only (Harus login DAN role 'admin')
+// Kita jalankan authMiddleware, LALU adminOnlyMiddleware
+app.use('/api/products', [authMiddleware, adminOnlyMiddleware], productRoutes);
+app.use('/api/suppliers', [authMiddleware, adminOnlyMiddleware], supplierRoutes);
+app.use('/api/warehouses', [authMiddleware, adminOnlyMiddleware], warehouseRoutes);
+app.use('/api/locations', [authMiddleware, adminOnlyMiddleware], locationRoutes);
 
-app.use('/api/products', productRoutes); // <--- TAMBAHKAN INI
-app.use('/api/suppliers', supplierRoutes);
-app.use('/api/warehouses', warehouseRoutes);
-app.use('/api/locations', locationRoutes);
-app.use('/api/stock', stockRoutes);
-
+// Rute Transaksi (Hanya perlu login, 'staff_gudang' BISA)
+app.use('/api/stock', authMiddleware, stockRoutes);
 // Jalankan Server
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => {

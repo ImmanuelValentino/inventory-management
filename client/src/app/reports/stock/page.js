@@ -4,8 +4,9 @@
 
 import { useState, useEffect } from 'react';
 import { getStockLevels } from '../../../services/api'; // <-- Impor API kita
+import withAuth from '@/components/auth/withAuth';
 
-export default function StockLevelsReport() {
+function StockLevelsReport() {
     const [stockLevels, setStockLevels] = useState([]);
     const [isLoading, setIsLoading] = useState(true);
 
@@ -75,3 +76,5 @@ export default function StockLevelsReport() {
         </main>
     );
 }
+
+export default withAuth(StockLevelsReport);

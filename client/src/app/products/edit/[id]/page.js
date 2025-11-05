@@ -5,8 +5,9 @@
 import { useState, useEffect } from 'react';
 import { useRouter, useParams } from 'next/navigation'; // <-- Impor useParams
 import { getProductById, updateProduct } from '../../../../services/api'; // <-- Impor API
+import withAuth from '@/components/auth/withAuth';
 
-export default function EditProductPage() {
+function EditProductPage() {
     const router = useRouter();
     const params = useParams(); // <-- Hook untuk ambil [id] dari URL
     const { id } = params;
@@ -190,3 +191,5 @@ export default function EditProductPage() {
         </main>
     );
 }
+
+export default withAuth(EditProductPage);

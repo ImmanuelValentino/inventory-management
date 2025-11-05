@@ -6,8 +6,9 @@ import { useState, useEffect } from 'react';
 import { useRouter, useParams } from 'next/navigation';
 // Impor semua API yang dibutuhkan
 import { getLocationById, updateLocation, getWarehouses } from '../../../../services/api';
+import withAuth from '@/components/auth/withAuth';
 
-export default function EditLocationPage() {
+function EditLocationPage() {
     const router = useRouter();
     const params = useParams();
     const { id } = params;
@@ -140,3 +141,5 @@ export default function EditLocationPage() {
         </main>
     );
 }
+
+export default withAuth(EditLocationPage);

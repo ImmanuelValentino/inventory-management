@@ -5,8 +5,9 @@
 import { useState, useEffect } from 'react';
 import { getLocations, deleteLocation } from '../../services/api';
 import Link from 'next/link';
+import withAuth from '@/components/auth/withAuth';
 
-export default function LocationsPage() {
+function LocationsPage() {
     const [locations, setLocations] = useState([]);
     const [isLoading, setIsLoading] = useState(true);
 
@@ -94,3 +95,5 @@ export default function LocationsPage() {
         </main>
     );
 }
+
+export default withAuth(LocationsPage);

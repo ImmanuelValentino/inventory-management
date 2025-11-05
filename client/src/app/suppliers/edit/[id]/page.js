@@ -5,8 +5,10 @@
 import { useState, useEffect } from 'react';
 import { useRouter, useParams } from 'next/navigation';
 import { getSupplierById, updateSupplier } from '../../../../services/api';
+import withAuth from '@/components/auth/withAuth';
 
-export default function EditSupplierPage() {
+
+function EditSupplierPage() {
     const router = useRouter();
     const params = useParams();
     const { id } = params;
@@ -120,3 +122,5 @@ export default function EditSupplierPage() {
         </main>
     );
 }
+
+export default withAuth(EditSupplierPage);

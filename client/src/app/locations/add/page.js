@@ -6,8 +6,9 @@ import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 // Impor 'createLocation' DAN 'getWarehouses'
 import { createLocation, getWarehouses } from '../../../services/api';
+import withAuth from '@/components/auth/withAuth';
 
-export default function AddLocationPage() {
+function AddLocationPage() {
     const router = useRouter();
     const [warehouses, setWarehouses] = useState([]); // State untuk daftar gudang
     const [formData, setFormData] = useState({
@@ -117,3 +118,5 @@ export default function AddLocationPage() {
         </main>
     );
 }
+
+export default withAuth(AddLocationPage);

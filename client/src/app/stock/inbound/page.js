@@ -11,8 +11,9 @@ import {
     getSuppliers,
     getLocations
 } from '../../../services/api';
+import withAuth from '@/components/auth/withAuth';
 
-export default function StockInboundPage() {
+function StockInboundPage() {
     const router = useRouter();
 
     // State untuk menyimpan data master
@@ -171,3 +172,5 @@ export default function StockInboundPage() {
         </main>
     );
 }
+
+export default withAuth(StockInboundPage);

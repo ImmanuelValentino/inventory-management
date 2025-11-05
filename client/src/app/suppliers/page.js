@@ -5,8 +5,9 @@
 import { useState, useEffect } from 'react';
 import { getSuppliers, deleteSupplier } from '../../services/api';
 import Link from 'next/link';
+import withAuth from '@/components/auth/withAuth';
 
-export default function SuppliersPage() {
+function SuppliersPage() {
     const [suppliers, setSuppliers] = useState([]);
     const [isLoading, setIsLoading] = useState(true);
 
@@ -95,3 +96,5 @@ export default function SuppliersPage() {
         </main>
     );
 }
+
+export default withAuth(SuppliersPage);

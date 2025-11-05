@@ -2,25 +2,24 @@
 
 const express = require('express');
 const router = express.Router();
-// 1. Update impor
+const authMiddleware = require('../middleware/authMiddleware'); // <-- 1. IMPOR
 const {
     handleInbound,
     getStockLevels,
     handleOutbound,
     handleTransfer,
     handleAdjustment,
-    getStockMovements // <-- Tambahkan ini
+    getStockMovements
 } = require('../controllers/stockController');
 
-// ... (rute /inbound, /levels, /outbound, /transfer, /adjustment) ...
-router.post('/inbound', handleInbound);
-router.get('/levels', getStockLevels);
-router.post('/outbound', handleOutbound);
-router.post('/transfer', handleTransfer);
-router.post('/adjustment', handleAdjustment);
+// Terapkan middleware ke SEMUA rute transaksi
+router.post('/inbound', authMiddleware, handleInbound);
+router.post('/outbound', authMiddleware, handleOutbound);
+router.post('/transfer', authMiddleware, handleTransfer);
+router.post('/adjustment', authMiddleware, handleAdjustment);
 
-// 2. TAMBAHKAN RUTE BARU DI BAWAH
-// GET /api/stock/movements
-router.get('/movements', getStockMovements);
+// Laporan juga kita amankan
+router.get('/levels', authMiddleware, getStockLevels);
+router.get('/movements', authMiddleware, getStockMovements);
 
 module.exports = router;

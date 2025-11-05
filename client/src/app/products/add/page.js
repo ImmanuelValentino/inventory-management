@@ -5,8 +5,9 @@
 import { useState } from 'react';
 import { useRouter } from 'next/navigation'; // <-- Gunakan navigation
 import { createProduct } from '../../../services/api'; // <-- Impor API create
+import withAuth from '@/components/auth/withAuth';
 
-export default function AddProductPage() {
+function AddProductPage() {
     const router = useRouter();
     const [formData, setFormData] = useState({
         sku: '',
@@ -161,3 +162,5 @@ export default function AddProductPage() {
         </main>
     );
 }
+
+export default withAuth(AddProductPage);

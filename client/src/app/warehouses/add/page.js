@@ -6,7 +6,9 @@ import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { createWarehouse } from '../../../services/api';
 
-export default function AddWarehousePage() {
+import withAuth from '@/components/auth/withAuth';
+
+function AddWarehousePage() {
     const router = useRouter();
     const [formData, setFormData] = useState({
         name: '',
@@ -74,3 +76,5 @@ export default function AddWarehousePage() {
         </main>
     );
 }
+
+export default withAuth(AddWarehousePage);

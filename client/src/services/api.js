@@ -8,6 +8,50 @@ const api = axios.create({
     baseURL: API_URL
 });
 
+api.interceptors.request.use(
+    (config) => {
+        // Ambil token dari localStorage
+        const token = localStorage.getItem('accessToken');
+        if (token) {
+            // Tambahkan ke header
+            config.headers['Authorization'] = `Bearer ${token}`;
+        }
+        return config;
+    },
+    (error) => {
+        return Promise.reject(error);
+    }
+);
+
+/**
+ * =======================================
+ * API UNTUK AUTHENTICATION
+ * =======================================
+ */
+
+export const registerUser = async (credentials) => {
+    try {
+        // credentials = { email, password }
+        const response = await api.post('/auth/register', credentials);
+        return response.data;
+    } catch (error) {
+        console.error('Error registering user:', error.response?.data || error.message);
+        throw error.response?.data || error;
+    }
+};
+
+export const loginUser = async (credentials) => {
+    try {
+        // credentials = { email, password }
+        const response = await api.post('/auth/login', credentials);
+        // response.data akan berisi { session, user }
+        return response.data;
+    } catch (error) {
+        console.error('Error logging in:', error.response?.data || error.message);
+        throw error.response?.data || error;
+    }
+};
+
 /**
  * =======================================
  * API UNTUK PRODUCTS (MASTER BARANG)
@@ -315,5 +359,8 @@ export const getStockMovements = async () => {
         return [];
     }
 };
+
+
+
 
 export default api;

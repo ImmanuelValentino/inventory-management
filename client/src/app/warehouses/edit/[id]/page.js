@@ -5,8 +5,10 @@
 import { useState, useEffect } from 'react';
 import { useRouter, useParams } from 'next/navigation';
 import { getWarehouseById, updateWarehouse } from '../../../../services/api';
+import withAuth from '@/components/auth/withAuth';
 
-export default function EditWarehousePage() {
+
+function EditWarehousePage() {
     const router = useRouter();
     const params = useParams();
     const { id } = params;
@@ -102,3 +104,6 @@ export default function EditWarehousePage() {
         </main>
     );
 }
+
+
+export default withAuth(EditWarehousePage);

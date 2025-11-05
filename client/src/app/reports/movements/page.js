@@ -4,6 +4,7 @@
 
 import { useState, useEffect } from 'react';
 import { getStockMovements } from '../../../services/api';
+import withAuth from '@/components/auth/withAuth';
 
 // Helper untuk format tanggal
 const formatDate = (dateString) => {
@@ -36,7 +37,7 @@ const QuantityCell = ({ value, type }) => {
     );
 };
 
-export default function StockMovementsReport() {
+function StockMovementsReport() {
     const [movements, setMovements] = useState([]);
     const [isLoading, setIsLoading] = useState(true);
 
@@ -123,3 +124,5 @@ export default function StockMovementsReport() {
         </main>
     );
 }
+
+export default withAuth(StockMovementsReport);

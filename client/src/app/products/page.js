@@ -6,8 +6,9 @@ import { useState, useEffect } from 'react';
 // 1. Impor deleteProduct
 import { getProducts, deleteProduct } from '../../services/api';
 import Link from 'next/link';
+import withAuth from '@/components/auth/withAuth';
 
-export default function ProductsPage() {
+function ProductsPage() {
     const [products, setProducts] = useState([]);
     const [isLoading, setIsLoading] = useState(true);
 
@@ -103,3 +104,5 @@ export default function ProductsPage() {
         </main>
     );
 }
+
+export default withAuth(ProductsPage);

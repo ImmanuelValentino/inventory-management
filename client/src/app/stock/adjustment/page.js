@@ -9,8 +9,9 @@ import {
     getProducts,
     getLocations
 } from '../../../services/api';
+import withAuth from '@/components/auth/withAuth';
 
-export default function StockAdjustmentPage() {
+function StockAdjustmentPage() {
     const router = useRouter();
 
     const [products, setProducts] = useState([]);
@@ -164,3 +165,5 @@ export default function StockAdjustmentPage() {
         </main>
     );
 }
+
+export default withAuth(StockAdjustmentPage);

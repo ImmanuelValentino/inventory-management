@@ -5,8 +5,9 @@
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { createSupplier } from '../../../services/api';
+import withAuth from '@/components/auth/withAuth';
 
-export default function AddSupplierPage() {
+function AddSupplierPage() {
     const router = useRouter();
     const [formData, setFormData] = useState({
         name: '',
@@ -92,3 +93,5 @@ export default function AddSupplierPage() {
         </main>
     );
 }
+
+export default withAuth(AddSupplierPage);

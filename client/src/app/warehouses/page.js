@@ -5,8 +5,10 @@
 import { useState, useEffect } from 'react';
 import { getWarehouses, deleteWarehouse } from '../../services/api';
 import Link from 'next/link';
+import withAuth from '@/components/auth/withAuth';
 
-export default function WarehousesPage() {
+
+function WarehousesPage() {
     const [warehouses, setWarehouses] = useState([]);
     const [isLoading, setIsLoading] = useState(true);
 
@@ -91,3 +93,6 @@ export default function WarehousesPage() {
         </main>
     );
 }
+
+
+export default withAuth(WarehousesPage);

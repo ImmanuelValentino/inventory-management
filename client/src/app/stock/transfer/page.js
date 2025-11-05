@@ -10,8 +10,9 @@ import {
     getProducts,
     getLocations
 } from '../../../services/api';
+import withAuth from '@/components/auth/withAuth';
 
-export default function StockTransferPage() {
+function StockTransferPage() {
     const router = useRouter();
 
     // State untuk menyimpan data master
@@ -175,3 +176,5 @@ export default function StockTransferPage() {
         </main>
     );
 }
+
+export default withAuth(StockTransferPage);

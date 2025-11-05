@@ -2,7 +2,9 @@
 
 const supabase = require('../config/supabaseClient');
 
-// Fungsi untuk mencatat STOK MASUK
+// ==========================================================
+// 1. STOK MASUK (INBOUND)
+// ==========================================================
 const handleInbound = async (req, res) => {
     const {
         product_id,
@@ -13,8 +15,8 @@ const handleInbound = async (req, res) => {
         notes
     } = req.body;
 
-    // TODO: Nanti kita akan ambil 'user_id' dari middleware auth
-    const user_id = null;
+    // INI PERUBAHANNYA: Ambil 'id' dari 'req.user' yang di-attach oleh middleware
+    const user_id = req.user.id;
 
     // Validasi dasar
     if (!product_id || !location_id || !quantity) {
@@ -30,10 +32,10 @@ const handleInbound = async (req, res) => {
             product_id_in: product_id,
             location_id_in: location_id,
             quantity_in: quantity,
-            supplier_id_in: supplier_id || null, // Supplier boleh null
+            supplier_id_in: supplier_id || null,
             reference_in: reference_number || null,
             notes_in: notes || null,
-            user_id_in: user_id
+            user_id_in: user_id // <-- INI PERUBAHANNYA (Tidak null lagi)
         });
 
         if (error) throw error;
@@ -44,31 +46,9 @@ const handleInbound = async (req, res) => {
     }
 };
 
-const getStockLevels = async (req, res) => {
-    try {
-        // Ini adalah kueri JOIN:
-        // 1. Ambil semua dari 'stock_levels'
-        // 2. Ambil 'sku' dan 'name' dari 'products' yang terhubung
-        // 3. Ambil 'code' dari 'locations' yang terhubung
-        // 4. Ambil 'name' dari 'warehouses' yang terhubung DENGAN 'locations'
-        const { data, error } = await supabase
-            .from('stock_levels')
-            .select(`
-        *,
-        products (sku, name),
-        locations (code, warehouses (name))
-        `)
-            .order('product_id', { ascending: true }); // Urutkan
-
-        if (error) throw error;
-
-        res.status(200).json(data);
-    } catch (error) {
-        res.status(500).json({ error: error.message });
-    }
-};
-
-
+// ==========================================================
+// 2. STOK KELUAR (OUTBOUND)
+// ==========================================================
 const handleOutbound = async (req, res) => {
     const {
         product_id,
@@ -78,8 +58,8 @@ const handleOutbound = async (req, res) => {
         notes
     } = req.body;
 
-    // TODO: Nanti kita akan ambil 'user_id' dari middleware auth
-    const user_id = null;
+    // INI PERUBAHANNYA: Ambil 'id' dari 'req.user'
+    const user_id = req.user.id;
 
     // Validasi dasar
     if (!product_id || !location_id || !quantity) {
@@ -97,24 +77,25 @@ const handleOutbound = async (req, res) => {
             quantity_in: quantity,
             reference_in: reference_number || null,
             notes_in: notes || null,
-            user_id_in: user_id
+            user_id_in: user_id // <-- INI PERUBAHANNYA (Tidak null lagi)
         });
 
         if (error) {
-            // Jika error dari RAISE EXCEPTION, error akan ada di 'message'
-            // dan kodenya 'P0001' (uncaught_exception)
             if (error.code === 'P0001') {
                 return res.status(400).json({ error: error.message });
             }
             throw error;
         }
 
-        res.status(200).json(data); // Kembalikan JSON dari fungsi
+        res.status(200).json(data);
     } catch (error) {
         res.status(500).json({ error: error.message });
     }
 };
 
+// ==========================================================
+// 3. TRANSFER STOK
+// ==========================================================
 const handleTransfer = async (req, res) => {
     const {
         product_id,
@@ -125,8 +106,8 @@ const handleTransfer = async (req, res) => {
         notes
     } = req.body;
 
-    // TODO: Nanti kita akan ambil 'user_id' dari middleware auth
-    const user_id = null;
+    // INI PERUBAHANNYA: Ambil 'id' dari 'req.user'
+    const user_id = req.user.id;
 
     // Validasi dasar
     if (!product_id || !from_location_id || !to_location_id || !quantity) {
@@ -145,24 +126,25 @@ const handleTransfer = async (req, res) => {
             quantity_in: quantity,
             reference_in: reference_number || null,
             notes_in: notes || null,
-            user_id_in: user_id
+            user_id_in: user_id // <-- INI PERUBAHANNYA (Tidak null lagi)
         });
 
         if (error) {
-            // Tangkap error validasi dari DB (Stok tdk cukup / Lokasi sama)
             if (error.code === 'P0001') {
                 return res.status(400).json({ error: error.message });
             }
             throw error;
         }
 
-        res.status(200).json(data); // Kembalikan JSON dari fungsi
+        res.status(200).json(data);
     } catch (error) {
         res.status(500).json({ error: error.message });
     }
 };
 
-
+// ==========================================================
+// 4. PENYESUAIAN STOK (ADJUSTMENT)
+// ==========================================================
 const handleAdjustment = async (req, res) => {
     const {
         product_id,
@@ -172,7 +154,8 @@ const handleAdjustment = async (req, res) => {
         notes
     } = req.body;
 
-    const user_id = null; // Nanti ambil dari auth
+    // INI PERUBAHANNYA: Ambil 'id' dari 'req.user'
+    const user_id = req.user.id;
 
     // Validasi dasar
     if (!product_id || !location_id || !quantity) {
@@ -181,7 +164,6 @@ const handleAdjustment = async (req, res) => {
     if (quantity === 0) {
         return res.status(400).json({ error: 'Quantity cannot be zero.' });
     }
-    // Notes/alasan WAJIB diisi untuk adjustment
     if (!notes || notes.trim() === '') {
         return res.status(400).json({ error: 'Notes/Reason is required for adjustments.' });
     }
@@ -192,8 +174,8 @@ const handleAdjustment = async (req, res) => {
             location_id_in: location_id,
             quantity_in: quantity,
             reference_in: reference_number || null,
-            notes_in: notes, // Wajib ada
-            user_id_in: user_id
+            notes_in: notes,
+            user_id_in: user_id // <-- INI PERUBAHANNYA (Tidak null lagi)
         });
 
         if (error) {
@@ -210,18 +192,32 @@ const handleAdjustment = async (req, res) => {
 };
 
 
+// ==========================================================
+// 5. LAPORAN STOK SAAT INI (TIDAK BERUBAH)
+// ==========================================================
+const getStockLevels = async (req, res) => {
+    try {
+        const { data, error } = await supabase
+            .from('stock_levels')
+            .select(`
+        *,
+        products (sku, name),
+        locations (code, warehouses (name))
+      `)
+            .order('product_id', { ascending: true });
+
+        if (error) throw error;
+        res.status(200).json(data);
+    } catch (error) {
+        res.status(500).json({ error: error.message });
+    }
+};
+
+// ==========================================================
+// 6. LAPORAN RIWAYAT PERGERAKAN (TIDAK BERUBAH)
+// ==========================================================
 const getStockMovements = async (req, res) => {
     try {
-        // Ini adalah kueri JOIN yang paling kompleks sejauh ini
-        // Kita akan mengambil:
-        // - Semua data dari 'stock_movements'
-        // - 'sku' dan 'name' dari 'products'
-        // - 'name' dari 'suppliers' (jika ada)
-        // - Data 'from_location' (termasuk nama gudangnya)
-        // - Data 'to_location' (termasuk nama gudangnya)
-
-        // Kita menggunakan alias (cth: from_location:...)
-        // untuk 'locations' karena kita join tabel yang sama dua kali
         const { data, error } = await supabase
             .from('stock_movements')
             .select(`
@@ -230,12 +226,10 @@ const getStockMovements = async (req, res) => {
         suppliers (name),
         from_location:locations!from_location_id (code, warehouses (name)),
         to_location:locations!to_location_id (code, warehouses (name))
-        `)
-            // Urutkan berdasarkan yang terbaru di atas
+      `)
             .order('movement_date', { ascending: false });
 
         if (error) throw error;
-
         res.status(200).json(data);
     } catch (error) {
         res.status(500).json({ error: error.message });
@@ -243,12 +237,12 @@ const getStockMovements = async (req, res) => {
 };
 
 
-// --- UPDATE EXPORTS DI BAWAH ---
+// --- EXPORT SEMUA FUNGSI ---
 module.exports = {
     handleInbound,
-    getStockLevels,
     handleOutbound,
     handleTransfer,
     handleAdjustment,
-    getStockMovements // <-- Tambahkan ini
+    getStockLevels,
+    getStockMovements
 };
