@@ -11,6 +11,7 @@ import {
 } from '../../../services/api';
 import withAuth from '@/components/auth/withAuth';
 
+
 function StockAdjustmentPage() {
     const router = useRouter();
 

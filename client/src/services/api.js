@@ -350,9 +350,14 @@ export const createStockAdjustment = async (adjData) => {
     }
 };
 
-export const getStockMovements = async () => {
+export const getStockMovements = async (filters) => {
     try {
-        const response = await api.get('/stock/movements');
+        // 'filters' akan jadi objek seperti { search: 'pulpen', dateFrom: '...' }
+        // 'params: filters' akan otomatis mengubahnya menjadi query string:
+        // ?search=pulpen&dateFrom=...
+        const response = await api.get('/stock/movements', {
+            params: filters
+        });
         return response.data;
     } catch (error) {
         console.error('Error fetching stock movements:', error);
@@ -360,7 +365,49 @@ export const getStockMovements = async () => {
     }
 };
 
+/**
+ * =======================================
+ * API UNTUK DASHBOARD
+ * =======================================
+ */
+
+// --- TAMBAHKAN FUNGSI INI ---
+export const getDashboardSummary = async () => {
+    try {
+        const response = await api.get('/dashboard/summary');
+        return response.data;
+    } catch (error) {
+        console.error('Error fetching dashboard summary:', error);
+        // Kembalikan data default agar halaman tidak crash
+        return { productsCount: 0, lowStockItems: [], totalValue: 0, potentialRevenue: 0, recentMovements: [] };
+    }
+};
 
 
+/**
+ * =======================================
+ * API UNTUK MANAJEMEN USER (ADMIN)
+ * =======================================a
+ */
+
+export const getUsers = async () => {
+    try {
+        const response = await api.get('/users');
+        return response.data;
+    } catch (error) {
+        console.error('Error fetching users:', error);
+        return [];
+    }
+};
+
+export const updateUserRole = async (userId, role) => {
+    try {
+        const response = await api.put(`/users/${userId}/role`, { role });
+        return response.data;
+    } catch (error) {
+        console.error('Error updating user role:', error);
+        throw error;
+    }
+};
 
 export default api;

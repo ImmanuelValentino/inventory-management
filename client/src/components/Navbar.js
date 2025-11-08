@@ -1,10 +1,10 @@
-// File: /client/src/components/Navbar.js
+// File: /client/src/components/Navbar.js (atau @/components/Navbar.js)
 
 'use client';
 
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
-import useAuth from '../hooks/useAuth'; // Pastikan hook ini ada di 'src/hooks/useAuth.js'
+import useAuth from '@/hooks/useAuth'; // Pastikan path @/hooks/useAuth.js benar
 
 // Halaman-halaman yang tidak perlu Navbar
 const noNavPaths = ['/login', '/register'];
@@ -51,6 +51,8 @@ export default function Navbar() {
                                 <Link href="/suppliers" className="block px-4 py-2 text-sm hover:bg-gray-600">Master Supplier</Link>
                                 <Link href="/warehouses" className="block px-4 py-2 text-sm hover:bg-gray-600">Master Gudang</Link>
                                 <Link href="/locations" className="block px-4 py-2 text-sm hover:bg-gray-600">Master Lokasi</Link>
+                                {/* --- INI BARIS BARU YANG DITAMBAHKAN --- */}
+                                <Link href="/admin/users" className="block px-4 py-2 text-sm hover:bg-gray-600 font-bold">Manajemen User</Link>
                             </div>
                         </div>
                     )}

@@ -60,7 +60,7 @@ const loginUser = async (req, res) => {
             throw new Error('User profile not found. Error: ' + profileError.message);
         }
 
-        // 3. Gabungkan data session (token) dan data profile (role)
+        // 3. Gabungkan data session (token) dan data profile (role)    
         //    dan kirim kembali ke frontend
         res.status(200).json({
             session: authData.session,

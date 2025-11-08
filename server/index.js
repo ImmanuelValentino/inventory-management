@@ -14,6 +14,8 @@ const warehouseRoutes = require('./routes/warehouseRoutes');
 const locationRoutes = require('./routes/locationRoutes.');
 const stockRoutes = require('./routes/stockRoutes');
 const authRoutes = require('./routes/authRoutes');
+const dashboardRoutes = require('./routes/dashboardRoutes'); // <-- 1. IMPOR INI
+const userRoutes = require('./routes/userRoutes'); // <-- 1. IMPOR INI
 
 
 const app = express();
@@ -36,10 +38,13 @@ app.use('/api/products', [authMiddleware, adminOnlyMiddleware], productRoutes);
 app.use('/api/suppliers', [authMiddleware, adminOnlyMiddleware], supplierRoutes);
 app.use('/api/warehouses', [authMiddleware, adminOnlyMiddleware], warehouseRoutes);
 app.use('/api/locations', [authMiddleware, adminOnlyMiddleware], locationRoutes);
+app.use('/api/users', [authMiddleware, adminOnlyMiddleware], userRoutes); // <-- 2. TAMBAHKAN INI
 
 // Rute Transaksi (Hanya perlu login, 'staff_gudang' BISA)
 app.use('/api/stock', authMiddleware, stockRoutes);
 // Jalankan Server
+
+app.use('/api/dashboard', authMiddleware, dashboardRoutes);
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => {
     console.log(`Server Express berjalan di http://localhost:${PORT}`);

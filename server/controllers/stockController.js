@@ -218,7 +218,11 @@ const getStockLevels = async (req, res) => {
 // ==========================================================
 const getStockMovements = async (req, res) => {
     try {
-        const { data, error } = await supabase
+        // 1. Ambil query parameter dari URL
+        const { search, dateFrom, dateTo } = req.query;
+
+        // 2. Mulai bangun kueri dasar
+        let query = supabase
             .from('stock_movements')
             .select(`
         *,
@@ -227,9 +231,33 @@ const getStockMovements = async (req, res) => {
         from_location:locations!from_location_id (code, warehouses (name)),
         to_location:locations!to_location_id (code, warehouses (name))
       `)
-            .order('movement_date', { ascending: false });
+            .order('movement_date', { ascending: false }); // Selalu urutkan terbaru di atas
+
+        // 3. Tambahkan filter ke kueri JIKA ada
+
+        // Filter berdasarkan nama produk (search)
+        if (search) {
+            // 'ilike' = case-insensitive LIKE (tidak peduli huruf besar/kecil)
+            query = query.ilike('products.name', `%${search}%`);
+        }
+
+        // Filter berdasarkan tanggal MULAI (dateFrom)
+        if (dateFrom) {
+            // 'gte' = greater than or equal
+            query = query.gte('movement_date', dateFrom);
+        }
+
+        // Filter berdasarkan tanggal SELESAI (dateTo)
+        if (dateTo) {
+            // 'lte' = less than or equal
+            query = query.lte('movement_date', dateTo);
+        }
+
+        // 4. Eksekusi kueri yang sudah dimodifikasi
+        const { data, error } = await query;
 
         if (error) throw error;
+
         res.status(200).json(data);
     } catch (error) {
         res.status(500).json({ error: error.message });
