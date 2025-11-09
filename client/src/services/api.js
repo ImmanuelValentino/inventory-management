@@ -2,7 +2,7 @@
 import axios from 'axios';
 
 // Ambil URL API kita dari file .env.local
-const API_URL = process.env.NEXT_PUBLIC_API_URL;
+const API_URL = 'https://inventory-management-production-61f8.up.railway.app/api';
 
 const api = axios.create({
     baseURL: API_URL
