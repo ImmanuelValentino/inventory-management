@@ -1,21 +1,27 @@
-// File: /server/routes/warehouseRoutes.js
+// File: /server/routes/warehouseRoutes.js (BARU)
 
 const express = require('express');
 const router = express.Router();
+// 1. Impor middleware admin
+const adminOnlyMiddleware = require('../middleware/adminOnlyMiddleware');
 
+// 2. Impor controller
 const {
     getAllWarehouses,
     getWarehouseById,
     createWarehouse,
     updateWarehouse,
     deleteWarehouse,
-} = require('../controllers/warehouseController');
+} = require('../controllers/warehouseController'); // (Pastikan ejaan controller ini benar)
 
-// Definisikan rute-rute CRUD
+// Rute GET (Membaca) - Boleh untuk semua user yang login
+// Ini agar staff_gudang bisa melihat daftar gudang di dropdown
 router.get('/', getAllWarehouses);
-router.post('/', createWarehouse);
 router.get('/:id', getWarehouseById);
-router.put('/:id', updateWarehouse);
-router.delete('/:id', deleteWarehouse);
+
+// Rute TULIS (Write) - HANYA ADMIN
+router.post('/', adminOnlyMiddleware, createWarehouse);
+router.put('/:id', adminOnlyMiddleware, updateWarehouse);
+router.delete('/:id', adminOnlyMiddleware, deleteWarehouse);
 
 module.exports = router;

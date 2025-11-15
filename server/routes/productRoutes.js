@@ -1,9 +1,10 @@
-// File: /server/routes/productRoutes.js
+// File: /server/routes/productRoutes.js (BARU)
 
 const express = require('express');
 const router = express.Router();
+// 1. IMPOR adminOnlyMiddleware DI SINI
+const adminOnlyMiddleware = require('../middleware/adminOnlyMiddleware');
 
-// Impor fungsi controller kita
 const {
     getAllProducts,
     getProductById,
@@ -12,21 +13,14 @@ const {
     deleteProduct,
 } = require('../controllers/productController');
 
-// Definisikan rute-rute CRUD
-
-// GET /api/products
+// Rute GET (Membaca) - Boleh untuk semua user yang login
 router.get('/', getAllProducts);
-
-// POST /api/products
-router.post('/', createProduct);
-
-// GET /api/products/:id
 router.get('/:id', getProductById);
 
-// PUT /api/products/:id
-router.put('/:id', updateProduct);
-
-// DELETE /api/products/:id
-router.delete('/:id', deleteProduct);
+// Rute TULIS (Write) - HANYA ADMIN
+// 2. Terapkan adminOnlyMiddleware di sini
+router.post('/', adminOnlyMiddleware, createProduct);
+router.put('/:id', adminOnlyMiddleware, updateProduct);
+router.delete('/:id', adminOnlyMiddleware, deleteProduct);
 
 module.exports = router;

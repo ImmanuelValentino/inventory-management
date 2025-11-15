@@ -14,4 +14,5 @@ const adminOnlyMiddleware = async (req, res, next) => {
     }
 };
 
-module.exports = adminOnlyMiddleware;
+// PASTIKAN BARIS DI BAWAH INI SEPERTI INI:
+module.exports = adminOnlyMiddleware; // <-- INI BENAR (langsung ekspor fungsinya)

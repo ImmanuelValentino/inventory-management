@@ -1,9 +1,7 @@
-// File: /server/routes/supplierRoutes.js
-
+// File: /server/routes/supplierRoutes.js (BARU)
 const express = require('express');
 const router = express.Router();
-
-// Impor fungsi controller
+const adminOnlyMiddleware = require('../middleware/adminOnlyMiddleware'); // <-- Impor
 const {
     getAllSuppliers,
     getSupplierById,
@@ -12,11 +10,13 @@ const {
     deleteSupplier,
 } = require('../controllers/supplierController');
 
-// Definisikan rute-rute CRUD
+// Rute GET - Boleh untuk semua
 router.get('/', getAllSuppliers);
-router.post('/', createSupplier);
 router.get('/:id', getSupplierById);
-router.put('/:id', updateSupplier);
-router.delete('/:id', deleteSupplier);
+
+// Rute TULIS - Hanya Admin
+router.post('/', adminOnlyMiddleware, createSupplier);
+router.put('/:id', adminOnlyMiddleware, updateSupplier);
+router.delete('/:id', adminOnlyMiddleware, deleteSupplier);
 
 module.exports = router;

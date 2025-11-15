@@ -32,18 +32,20 @@ app.get('/api/test', (req, res) => {
     res.json({ message: 'API berjalan!' });
 });
 
-// Rute Admin Only (Harus login DAN role 'admin')
-// Kita jalankan authMiddleware, LALU adminOnlyMiddleware
-app.use('/api/products', [authMiddleware, adminOnlyMiddleware], productRoutes);
-app.use('/api/suppliers', [authMiddleware, adminOnlyMiddleware], supplierRoutes);
-app.use('/api/warehouses', [authMiddleware, adminOnlyMiddleware], warehouseRoutes);
-app.use('/api/locations', [authMiddleware, adminOnlyMiddleware], locationRoutes);
-app.use('/api/users', [authMiddleware, adminOnlyMiddleware], userRoutes); // <-- 2. TAMBAHKAN INI
+// Rute yang dilindungi (Perlu Login)
+// Aturan role spesifik (admin only) akan diurus di DALAM file rute masing-masing
+app.use('/api/products', authMiddleware, productRoutes);
+app.use('/api/suppliers', authMiddleware, supplierRoutes);
+app.use('/api/warehouses', authMiddleware, warehouseRoutes);
+app.use('/api/locations', authMiddleware, locationRoutes);
 
-// Rute Transaksi (Hanya perlu login, 'staff_gudang' BISA)
+// Rute Admin Only (Ini HANYA untuk /api/users)
+app.use('/api/users', [authMiddleware, adminOnlyMiddleware], userRoutes);
+
+// Rute Transaksi (Perlu Login)
 app.use('/api/stock', authMiddleware, stockRoutes);
-// Jalankan Server
 
+// Rute Dashboard (Perlu Login)
 app.use('/api/dashboard', authMiddleware, dashboardRoutes);
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => {
